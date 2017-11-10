@@ -2,9 +2,7 @@ import random
 from enum import Enum
 
 
-class Breed(Enum):
-    C = 1
-    NC = 2
+BREED_ENUM = {'C': 1, 'NC': 2}
 
 
 class Agent:
@@ -31,7 +29,7 @@ class Agent:
         affinity = (self.payment_at_purchase / self.attribute_price +
                     rand * self.attribute_promotions * self.inertia_for_switch)
 
-        if self.breed == Breed.C and affinity < self.social_grade * self.attribute_brand:
-            self.breed = Breed.NC
-        elif self.breed == Breed.NC and affinity < self.social_grade * self.attribute_brand * brand_factor:
-            self.breed = Breed.C
+        if self.breed == BREED_ENUM['C'] and affinity < self.social_grade * self.attribute_brand:
+            self.breed = BREED_ENUM['NC']
+        elif self.breed == BREED_ENUM['NC'] and affinity < self.social_grade * self.attribute_brand * brand_factor:
+            self.breed = BREED_ENUM['C']
