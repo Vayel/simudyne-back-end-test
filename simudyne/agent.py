@@ -1,8 +1,7 @@
 from enum import Enum
 
 
-BREED_ENUM = {'C': 1, 'NC': 2}
-REV_BREED_ENUM = {1: 'C', 2: 'NC'}
+BREED_C, BREED_NC = 'C', 'NC'
 
 class Agent:
     def __init__(self, breed, id_, age, social_grade, payment_at_purchase,
@@ -28,7 +27,7 @@ class Agent:
 
     def to_json(self):
         return dict(
-            breed=REV_BREED_ENUM[self.breed],
+            breed=self.breed,
             id=self.id_,
             age=self.age,
             social_grade=self.social_grade,

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS agents (
-    breed INTEGER NOT NULL,
+    breed VARCHAR(2) NOT NULL,
     id INTEGER NOT NULL PRIMARY KEY,
     age INTEGER NOT NULL,
     social_grade INTEGER NOT NULL,

@@ -34,8 +34,8 @@ if __name__ == '__main__':
         next(reader, None)  # Skip the headers
         for row in reader:
             # Parse row
-            row[BREED] = (sim.agent.BREED_ENUM['C'] if row[BREED] == 'Breed_C'
-                          else sim.agent.BREED_ENUM['NC'])
+            row[BREED] = (sim.agent.BREED_C if row[BREED] == 'Breed_C'
+                          else sim.agent.BREED_NC)
             parse_cell(row, ID, float)  # Cannot convert into int directly
             parse_cell(row, ID, int)
             parse_cell(row, AGE, int)

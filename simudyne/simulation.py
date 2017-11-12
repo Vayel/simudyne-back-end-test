@@ -1,5 +1,5 @@
 import random
-from .agent import BREED_ENUM, REV_BREED_ENUM
+from .agent import BREED_C, BREED_NC
 
 
 def step(agent, brand_factor):
@@ -11,16 +11,16 @@ def step(agent, brand_factor):
     affinity = (agent.payment_at_purchase / agent.attribute_price +
                 rand * agent.attribute_promotions * agent.inertia_for_switch)
 
-    if agent.breed == BREED_ENUM['C'] and affinity < agent.social_grade * agent.attribute_brand:
-        agent.breed = BREED_ENUM['NC']
-    elif agent.breed == BREED_ENUM['NC'] and affinity < agent.social_grade * agent.attribute_brand * brand_factor:
-        agent.breed = BREED_ENUM['C']
+    if agent.breed == BREED_C and affinity < agent.social_grade * agent.attribute_brand:
+        agent.breed = BREED_NC
+    elif agent.breed == BREED_NC and affinity < agent.social_grade * agent.attribute_brand * brand_factor:
+        agent.breed = BREED_C
 
 
 def simulate(agent, brand_factor, n_years):
     states = {}
-    states[agent.age] = REV_BREED_ENUM[agent.breed]
+    states[agent.age] = agent.breed
     for _ in range(n_years):
         step(agent, brand_factor)
-        states[agent.age] = REV_BREED_ENUM[agent.breed]
+        states[agent.age] = agent.breed
     return states
