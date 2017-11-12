@@ -1,9 +1,8 @@
-import random
 from enum import Enum
 
 
 BREED_ENUM = {'C': 1, 'NC': 2}
-
+REV_BREED_ENUM = {1: 'C', 2: 'NC'}
 
 class Agent:
     def __init__(self, breed, id_, age, social_grade, payment_at_purchase,
@@ -27,23 +26,9 @@ class Agent:
                 'auto_renew={auto_renew}, inertia_for_switch={inertia_for_switch})'
                 .format(**self.to_json()))
 
-    def step(self, brand_factor):
-        self.age += 1
-        if self.auto_renew:
-            return
-
-        rand = random.random() * 3  # Get a random number in [0, 3[
-        affinity = (self.payment_at_purchase / self.attribute_price +
-                    rand * self.attribute_promotions * self.inertia_for_switch)
-
-        if self.breed == BREED_ENUM['C'] and affinity < self.social_grade * self.attribute_brand:
-            self.breed = BREED_ENUM['NC']
-        elif self.breed == BREED_ENUM['NC'] and affinity < self.social_grade * self.attribute_brand * brand_factor:
-            self.breed = BREED_ENUM['C']
-
     def to_json(self):
         return dict(
-            breed=self.breed,
+            breed=REV_BREED_ENUM[self.breed],
             id=self.id_,
             age=self.age,
             social_grade=self.social_grade,
