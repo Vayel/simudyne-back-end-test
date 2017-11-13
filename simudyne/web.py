@@ -1,12 +1,10 @@
 from flask import Flask, jsonify, abort, request, render_template
 
-from . import model, simulation
+from . import config, model, simulation
 from .agent import BREED_C, BREED_NC
 
 app = Flask(__name__)
-model.connect('database.db')
-N_YEARS = 15  # TODO: to put in config file
-MIN_BRAND_FACTOR, MAX_BRAND_FACTOR = 0.1, 2.9 # TODO: config file
+model.connect(config.DB_PATH)
 
 @app.route('/')
 def home():
@@ -26,10 +24,10 @@ def parse_brand_factor(val):
         val = float(val)
     except TypeError:
         raise ValueError('The brand_factor param must be a float.')
-    if val < MIN_BRAND_FACTOR or val > MAX_BRAND_FACTOR:
+    if val < config.MIN_BRAND_FACTOR or val > config.MAX_BRAND_FACTOR:
         raise ValueError('The brand_factor must be in [{min}, {max}]'.format(
-            min=MIN_BRAND_FACTOR,
-            max=MAX_BRAND_FACTOR,
+            min=config.MIN_BRAND_FACTOR,
+            max=config.MAX_BRAND_FACTOR,
         ))
     return val
 
@@ -45,7 +43,7 @@ def simulate_one(id_):
     except ValueError as e:
         abort(500, str(e))
 
-    states = simulation.simulate(agent, brand_factor, N_YEARS)
+    states = simulation.simulate(agent, brand_factor, config.N_YEARS)
     return jsonify(states)
 
 
@@ -67,7 +65,7 @@ def simulate_all():
     year_resp['NC'] = [agent.id_ for agent in agents if agent.breed == BREED_NC]
     resp.append(year_resp)
 
-    for _ in range(N_YEARS):
+    for _ in range(config.N_YEARS):
         year_resp = create_year_resp()
         for agent in agents:
             original_breed = agent.breed

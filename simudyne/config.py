@@ -1,0 +1,3 @@
+N_YEARS = 15
+MIN_BRAND_FACTOR, MAX_BRAND_FACTOR = 0.1, 2.9
+DB_PATH = 'database.db'
