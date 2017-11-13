@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort, request, render_template
+from flask import Flask, jsonify, request, render_template
 
 from . import config, model, simulation
 from .agent import BREED_C, BREED_NC
@@ -8,7 +8,8 @@ model.connect(config.DB_PATH)
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', min_brand_factor=config.MIN_BRAND_FACTOR,
+                           max_brand_factor=config.MAX_BRAND_FACTOR)
 
 
 @app.route('/agents/<id_>')
@@ -36,12 +37,16 @@ def parse_brand_factor(val):
 def simulate_one(id_):
     agent = model.get_by_id(id_)
     if agent is None:
-        abort(404)
+        resp = jsonify('No agent has the id {}.'.format(id_))
+        resp.status_code = 404
+        return resp
 
     try:
         brand_factor = parse_brand_factor(request.args.get('brand_factor'))
     except ValueError as e:
-        abort(500, str(e))
+        resp = jsonify(str(e))
+        resp.status_code = 400
+        return resp
 
     states = simulation.simulate(agent, brand_factor, config.N_YEARS)
     return jsonify(states)
@@ -52,7 +57,9 @@ def simulate_all():
     try:
         brand_factor = parse_brand_factor(request.args.get('brand_factor'))
     except ValueError as e:
-        abort(500, str(e))
+        resp = jsonify(str(e))
+        resp.status_code = 400
+        return resp
 
     def create_year_resp():
         return {'C': [], 'NC': [], 'C_lost': [], 'C_gained': [], 'C_regained': []}

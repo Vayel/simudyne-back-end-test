@@ -12,5 +12,14 @@
 {% endblock %}
 
 {% block content %}
-Home
+<form method="GET" action="" id="simulate_one_form">
+  <div class="errors"></div>
+  <label for="agent_id">Agent id:</label>
+  <input type="text" name="agent_id" required="required" />
+  <br />
+  <label for="brand_factor">Brand factor:</label>
+  <input type="number" name="brand_factor" required="required" min="{{ min_brand_factor }}" max="{{ max_brand_factor }}" step="0.1" value="{{ min_brand_factor }}" />
+  <br />
+  <input type="submit" value="Simulate" />
+</form>
 {% endblock %}
