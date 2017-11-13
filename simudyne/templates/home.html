@@ -8,6 +8,7 @@
 
 {% block js %}
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %}
 
@@ -22,4 +23,8 @@
   <br />
   <input type="submit" value="Simulate" />
 </form>
+
+<div class="chart_container">
+  <canvas id="one_agent_chart" width="600" height="200"></canvas>
+</div>
 {% endblock %}
