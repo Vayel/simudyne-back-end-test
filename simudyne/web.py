@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, request, render_template
 
 from . import model, simulation
 from .agent import BREED_C, BREED_NC
@@ -10,7 +10,7 @@ MIN_BRAND_FACTOR, MAX_BRAND_FACTOR = 0.1, 2.9 # TODO: config file
 
 @app.route('/')
 def home():
-    return "Hello World!"
+    return render_template('home.html')
 
 
 @app.route('/agents/<id_>')
