@@ -18,6 +18,9 @@ class Agent:
         self.auto_renew = auto_renew
         self.inertia_for_switch = inertia_for_switch
 
+        self.C_to_NC_thresh = self.social_grade * self.attribute_brand
+        self.NC_to_C_thresh = None  # Depend on the brand factor
+
     def __str__(self):
         return ('Agent(breed={breed}, id={id}, age={age}, social_grade={social_grade}, '
                 'payment_at_purchase={payment_at_purchase}, attribute_brand={attribute_brand}, '
@@ -37,4 +40,5 @@ class Agent:
             attribute_promotions=self.attribute_promotions,
             auto_renew=self.auto_renew,
             inertia_for_switch=self.inertia_for_switch,
+            C_to_NC_thresh=self.C_to_NC_thresh,
         )

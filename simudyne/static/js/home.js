@@ -14,10 +14,17 @@ $(document).ready(function() {
         }
     }
 
-    function renderOne(id, data) {
-        var points = [];
-        for(var date in data) {
-            points.push({x: date, y: data[date]});
+    function renderOne(id, simulation, agent) {
+        var breeds = [], affinities = [], thresholds = [];
+        var CToNCThresh = agent.C_to_NC_thresh;
+        var NCToCThresh = agent.C_to_NC_thresh * simulation.brand_factor;
+
+        for(var state of Object.values(simulation.states)) {
+            if(!breeds.length) thresh = null;
+            else thresh = (breeds[breeds.length - 1] == 'C' ? CToNCThresh : NCToCThresh);
+            thresholds.push(thresh);
+            breeds.push(state[0]);
+            affinities.push(state[1]);
         }
 
         var ctx = document.getElementById('one_agent_chart').getContext('2d');
@@ -27,14 +34,42 @@ $(document).ready(function() {
         var chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Object.keys(data),
+                labels: Object.keys(simulation.states),
                 datasets: [{
-                    label: 'Agent ' + id,
+                    label: 'Affinity',
+                    showLine: false,
+                    data: affinities,
+                    borderColor: 'blue',
+					fill: false,
+                    pointStyle: 'rectRot',
+                    pointRadius: 5,
+                    pointHitRadius: 5,
+                    pointHoverRadius: 5,
+                    yAxisID: 'affinity-axis'
+                }, {
+                    label: 'Threshold',
+                    showLine: false,
+                    data: thresholds,
+                    borderColor: 'green',
+					fill: false,
+                    pointStyle: 'rectRot',
+                    pointRadius: 5,
+                    pointHitRadius: 5,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: 'gree',
+                    yAxisID: 'affinity-axis'
+
+                }, {
+                    label: 'Breed',
                     steppedLine: true,
-                    data: Object.values(data),
+                    data: breeds,
                     borderColor: 'red',
 					fill: false,
-                }]
+                    pointRadius: 0,
+                    pointHitRadius: 0,
+                    pointHoverRadius: 0,
+                    yAxisID: 'breed-axis'
+                },]
             },
             options: {
                 maintainAspectRatio: false,
@@ -51,10 +86,24 @@ $(document).ready(function() {
                         type: 'category',
                         labels: ['C', 'NC'],
                         offset: true,
+                        id: "breed-axis",
                         scaleLabel: {
                             display: true,
                             labelString: 'Breed'
                         }
+                    }, {
+                        type: 'linear',
+                        display: true,
+                        offset: true,
+                        id: "affinity-axis",
+                        position: "right",
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Affinity'
+                        },
+                        gridLines: {
+                            drawOnChartArea: false,
+                        },
                     }]
                 }
             }
@@ -70,10 +119,14 @@ $(document).ready(function() {
         var url = '/simulate/' + agentId + '?brand_factor=' + brandFactor;
         var form = this;
 
-        $.getJSON(url, function(data) {
+        $.getJSON(url, function(simulation) {
             url = '/agents/' + agentId;
-            $.getJSON(url, renderAgent);
-            renderOne(agentId, data);
+            $.getJSON(url, function(agent) {
+                renderAgent(agent);
+                renderOne(agentId, simulation, agent);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                displayFormError(form, jqXHR.responseJSON);
+            });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             displayFormError(form, jqXHR.responseJSON);
         });
