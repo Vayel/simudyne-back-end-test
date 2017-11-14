@@ -14,15 +14,29 @@ $(document).ready(function() {
         }
     }
 
+    function thresholdLine(label, x1, x2, y, dash) {
+        return {
+            label: label,
+            data: [{x: x1, y: y}, {x: x2, y: y}],
+            borderColor: 'black',
+            borderDash: dash,
+            borderWidth: 1,
+            fill: false,
+            pointRadius: 0,
+            pointHitRadius: 0,
+            pointHoverRadius: 0,
+            yAxisID: 'affinity-axis'
+        };
+    }
+
     function renderOne(id, simulation, agent) {
-        var breeds = [], affinities = [], thresholds = [];
         var CToNCThresh = agent.C_to_NC_thresh;
         var NCToCThresh = agent.C_to_NC_thresh * simulation.brand_factor;
 
+        var labels = Object.keys(simulation.states);
+        var breeds = [], affinities = [], thresholds = [];
+
         for(var state of Object.values(simulation.states)) {
-            if(!breeds.length) thresh = null;
-            else thresh = (breeds[breeds.length - 1] == 'C' ? CToNCThresh : NCToCThresh);
-            thresholds.push(thresh);
             breeds.push(state[0]);
             affinities.push(state[1]);
         }
@@ -31,35 +45,40 @@ $(document).ready(function() {
         ctx.width = parseInt($('#one_agent_chart').attr('width'));
         ctx.height= parseInt($('#one_agent_chart').attr('height'));
 
+        var NCToCThreshLine = thresholdLine(
+            'NC->C threshold',
+            labels[0],
+            labels[labels.length - 1],
+            NCToCThresh,
+            [15, 5]
+        );
+        var CToNCThreshLine = thresholdLine(
+            'C->NC threshold',
+            labels[0],
+            labels[labels.length - 1],
+            CToNCThresh,
+            [5, 5]
+        );
+
         var chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Object.keys(simulation.states),
+                labels: labels,
                 datasets: [{
                     label: 'Affinity',
                     showLine: false,
                     data: affinities,
                     borderColor: 'blue',
+                    borderWidth: 1,
 					fill: false,
                     pointStyle: 'rectRot',
                     pointRadius: 5,
                     pointHitRadius: 5,
                     pointHoverRadius: 5,
                     yAxisID: 'affinity-axis'
-                }, {
-                    label: 'Threshold',
-                    showLine: false,
-                    data: thresholds,
-                    borderColor: 'green',
-					fill: false,
-                    pointStyle: 'rectRot',
-                    pointRadius: 5,
-                    pointHitRadius: 5,
-                    pointHoverRadius: 5,
-                    pointBackgroundColor: 'gree',
-                    yAxisID: 'affinity-axis'
-
-                }, {
+                },
+                NCToCThreshLine, CToNCThreshLine,
+                {
                     label: 'Breed',
                     steppedLine: true,
                     data: breeds,
@@ -69,7 +88,7 @@ $(document).ready(function() {
                     pointHitRadius: 0,
                     pointHoverRadius: 0,
                     yAxisID: 'breed-axis'
-                },]
+                }]
             },
             options: {
                 maintainAspectRatio: false,
