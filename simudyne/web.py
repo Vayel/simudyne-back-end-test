@@ -96,4 +96,7 @@ def simulate_all():
                     year_resp['C_regained'].append(agent.id_)
         resp.append(year_resp)
 
-    return jsonify(resp)
+    return jsonify({
+        'brand_factor': brand_factor,
+        'data': resp
+    })

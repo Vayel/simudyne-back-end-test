@@ -39,6 +39,10 @@
   <input type="submit" value="Simulate" />
 </form>
 
+<div id="loader">
+Loading...
+</div>
+
 <div id="simulate_one">
   <table id="agent" border="1">
     <tr>
@@ -65,6 +69,12 @@
   
   <div class="chart_container">
     <canvas id="one_agent_chart" width="600" height="200"></canvas>
+  </div>
+</div>
+
+<div id="simulate_all">
+  <div class="chart_container">
+    <canvas id="all_agents_chart" width="600" height="200"></canvas>
   </div>
 </div>
 {% endblock %}

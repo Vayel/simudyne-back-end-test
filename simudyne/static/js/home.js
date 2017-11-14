@@ -7,10 +7,7 @@ $(document).ready(function() {
     function displayFormError(form, msg) {
         $(form).find('.error').html(msg);
         $(form).find('.error').show();
-    }
-
-    function hideResults() {
-        $('#simulate_one').hide();
+        $('#loader').hide();
     }
 
     function renderAgent(agent) {
@@ -51,22 +48,7 @@ $(document).ready(function() {
         ctx.width = parseInt($('#one_agent_chart').attr('width'));
         ctx.height= parseInt($('#one_agent_chart').attr('height'));
 
-        var NCToCThreshLine = thresholdLine(
-            'NC->C threshold',
-            labels[0],
-            labels[labels.length - 1],
-            NCToCThresh,
-            [15, 5]
-        );
-        var CToNCThreshLine = thresholdLine(
-            'C->NC threshold',
-            labels[0],
-            labels[labels.length - 1],
-            CToNCThresh,
-            [5, 5]
-        );
-
-        var chart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -82,9 +64,19 @@ $(document).ready(function() {
                     pointHitRadius: 5,
                     pointHoverRadius: 5,
                     yAxisID: 'affinity-axis'
-                },
-                NCToCThreshLine, CToNCThreshLine,
-                {
+                }, thresholdLine(
+                    'NC->C threshold',
+                    labels[0],
+                    labels[labels.length - 1],
+                    NCToCThresh,
+                    [15, 5]
+                ), thresholdLine(
+                    'C->NC threshold',
+                    labels[0],
+                    labels[labels.length - 1],
+                    CToNCThresh,
+                    [5, 5]
+                ), {
                     label: 'Breed',
                     steppedLine: true,
                     data: breeds,
@@ -135,12 +127,67 @@ $(document).ready(function() {
         });
     }
 
+    function renderAll(simulation) {
+        var ctx = document.getElementById('all_agents_chart').getContext('2d');
+        ctx.width = parseInt($('#all_agents_chart').attr('width'));
+        ctx.height= parseInt($('#all_agents_chart').attr('height'));
+
+        var labels = Object.keys(simulation.data);
+        var data = {C: [], NC: [], C_gained: [], C_lost: [], C_regained: []};
+
+        for(var obj of Object.values(simulation.data)) {
+            for(var key in obj) {
+                data[key].push(obj[key].length);
+            }
+        }
+
+        function createDataset(data, label, color) {
+            return {
+                label: label,
+                data: data,
+                borderColor: color,
+                fill: false,
+            };
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    createDataset(data.C, 'C', 'red'),
+                    createDataset(data.NC, 'NC', 'blue'),
+                    createDataset(data.C_lost, 'C_lost', 'green'),
+                    createDataset(data.C_gained, 'C_gained', 'yellow'),
+                    createDataset(data.C_regained, 'C_regained', 'black'),
+                ]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Year'
+                        },
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Number of agents'
+                        },
+                    }],
+                },
+            }
+        });
+    }
+
     function simulateOne(id, brandFactor, form) {
         $.getJSON('/simulate/' + id + '?brand_factor=' + brandFactor, function(simulation) {
             $.getJSON('/agents/' + id, function(agent) {
                 $('#simulate_one').show();
                 renderAgent(agent);
                 renderOne(id, simulation, agent);
+                $('#loader').hide();
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 displayFormError(form, jqXHR.responseJSON);
             });
@@ -149,14 +196,26 @@ $(document).ready(function() {
         });
     }
 
+    function simulateAll(brandFactor, form) {
+        $.getJSON('/simulate?brand_factor=' + brandFactor, function(sim) {
+            $('#simulate_all').show();
+            renderAll(sim);
+            $('#loader').hide();
+        });
+    }
+
     $('#simulate_form').submit(function(e) {
         e.preventDefault();
         cleanFormError(this);
-        hideResults();
+
+        $('#simulate_one').hide();
+        $('#simulate_all').hide();
+        $('#loader').show();
 
         var agentId = $(this).find('[name="agent_id"]').val();
         var brandFactor = $(this).find('[name="brand_factor"]').val();
 
-        if(agentId) simulateOne(agentId, brandFactor, this);
+        if(agentId) return simulateOne(agentId, brandFactor, this);
+        simulateAll(brandFactor, this);
     });
 });
