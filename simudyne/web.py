@@ -16,7 +16,9 @@ def home():
 def get_agent(id_):
     agent = model.get_by_id(id_)
     if agent is None:
-        abort(404)
+        resp = jsonify('No agent with the id "{}" found.'.format(id_))
+        resp.status_code = 404
+        return resp
     return jsonify(**agent.to_json())
 
 

@@ -32,6 +32,13 @@ $(document).ready(function() {
         };
     }
 
+    function getCtx(id) {
+        var ctx = document.getElementById(id).getContext('2d');
+        ctx.width = parseInt($('#' + id).attr('width'));
+        ctx.height= parseInt($('#' + id).attr('height'));
+        return ctx;
+    }
+
     function renderOne(id, simulation, agent) {
         var CToNCThresh = agent.C_to_NC_thresh;
         var NCToCThresh = agent.C_to_NC_thresh * simulation.brand_factor;
@@ -44,11 +51,7 @@ $(document).ready(function() {
             affinities.push(state[1]);
         }
 
-        var ctx = document.getElementById('one_agent_chart').getContext('2d');
-        ctx.width = parseInt($('#one_agent_chart').attr('width'));
-        ctx.height= parseInt($('#one_agent_chart').attr('height'));
-
-        new Chart(ctx, {
+        new Chart(getCtx('one_agent_chart'), {
             type: 'line',
             data: {
                 labels: labels,
@@ -128,10 +131,6 @@ $(document).ready(function() {
     }
 
     function renderAll(simulation) {
-        var ctx = document.getElementById('all_agents_chart').getContext('2d');
-        ctx.width = parseInt($('#all_agents_chart').attr('width'));
-        ctx.height= parseInt($('#all_agents_chart').attr('height'));
-
         var labels = Object.keys(simulation.data);
         var data = {C: [], NC: [], C_gained: [], C_lost: [], C_regained: []};
 
@@ -150,34 +149,46 @@ $(document).ready(function() {
             };
         }
 
-        new Chart(ctx, {
+        var options = {
+            tooltips: false,
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Year'
+                    },
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Number of agents'
+                    },
+                }],
+            },
+        };
+
+        new Chart(getCtx('breeds_chart'), {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [
                     createDataset(data.C, 'C', 'red'),
                     createDataset(data.NC, 'NC', 'blue'),
+                ]
+            },
+            options,
+        });
+        new Chart(getCtx('breed_changes_chart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
                     createDataset(data.C_lost, 'C_lost', 'green'),
                     createDataset(data.C_gained, 'C_gained', 'yellow'),
                     createDataset(data.C_regained, 'C_regained', 'black'),
                 ]
             },
-            options: {
-                scales: {
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Year'
-                        },
-                    }],
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Number of agents'
-                        },
-                    }],
-                },
-            }
+            options,
         });
     }
 
