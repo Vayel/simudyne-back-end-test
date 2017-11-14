@@ -49,7 +49,11 @@ def simulate_one(id_):
         return resp
 
     states = simulation.simulate(agent, brand_factor, config.N_YEARS)
-    return jsonify(states)
+    return jsonify({
+        'states': states,
+        'agent_id': id_,
+        'brand_factor': brand_factor,
+    })
 
 
 @app.route('/simulate')
