@@ -70,37 +70,19 @@ def simulate_all():
     def create_year_resp():
         return {'C': [], 'NC': [], 'C_lost': [], 'C_gained': [], 'C_regained': []}
 
-    resp = []
     agents = list(model.get_all())
-
-    year_resp = create_year_resp()
-    year_resp['C'] = [agent.id_ for agent in agents if agent.breed == BREED_C]
-    year_resp['NC'] = [agent.id_ for agent in agents if agent.breed == BREED_NC]
-    resp = [year_resp, *[create_year_resp() for _ in range(config.N_YEARS)]]
+    # +1 because we include the original year
+    resp = [create_year_resp() for _ in range(config.N_YEARS + 1)]
 
     for agent in agents:
-        original_age = agent.age
-        switched_to_NC = False
         states = simulation.simulate(agent, brand_factor, config.N_YEARS)
 
-        for i in range(1, config.N_YEARS+1):
-            previous_breed = states[original_age + i - 1][0]
-            breed = states[original_age + i][0]
+        for i, state in enumerate(states):
+            resp[i][state['breed']].append(agent.id_)
 
-            if breed == BREED_NC:
-                resp[i]['NC'].append(agent.id_)
-
-                if previous_breed == BREED_C:
-                    resp[i]['C_lost'].append(agent.id_)
-                    switched_to_NC = True
-            # Do not use else keyword to make it easier to add new breeds
-            elif breed == BREED_C:
-                resp[i]['C'].append(agent.id_)
-
-                if previous_breed == BREED_NC:
-                    resp[i]['C_gained'].append(agent.id_)
-                if switched_to_NC:
-                    resp[i]['C_regained'].append(agent.id_)
+            for key in ('C_lost', 'C_gained', 'C_regained'):
+                if state[key]:
+                    resp[i][key].append(agent.id_)
 
     return jsonify({
         'brand_factor': brand_factor,

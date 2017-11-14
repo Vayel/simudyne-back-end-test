@@ -43,12 +43,14 @@ $(document).ready(function() {
         var CToNCThresh = agent.C_to_NC_thresh;
         var NCToCThresh = agent.C_to_NC_thresh * simulation.brand_factor;
 
-        var labels = Object.keys(simulation.states);
+        var labels = Object.keys(simulation.states).map(function(year) {
+            return parseInt(year) + agent.age;
+        });
         var breeds = [], affinities = [], thresholds = [];
 
         for(var state of Object.values(simulation.states)) {
-            breeds.push(state[0]);
-            affinities.push(state[1]);
+            breeds.push(state.breed);
+            affinities.push(state.affinity);
         }
 
         new Chart(getCtx('one_agent_chart'), {
@@ -99,7 +101,7 @@ $(document).ready(function() {
                         offset: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Year'
+                            labelString: 'Age'
                         },
                     }],
                     yAxes: [{
