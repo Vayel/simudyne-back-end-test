@@ -1,3 +1,7 @@
+#agent {
+  border-collapse: collapse;
+}
+
 .chart_container {
   width: 800px;
 }

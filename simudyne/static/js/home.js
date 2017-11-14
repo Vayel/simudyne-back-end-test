@@ -7,12 +7,18 @@ $(document).ready(function() {
         $(form).find('.errors').append('<p>' + msg + '</p>');
     }
 
+    function renderAgent(agent) {
+        var table = $('#agent');
+        for(var attr in agent) {
+            table.find('[name="' + attr + '"]').html(agent[attr]);
+        }
+    }
+
     function renderOne(id, data) {
         var points = [];
         for(var date in data) {
             points.push({x: date, y: data[date]});
         }
-        console.log(points);
 
         var ctx = document.getElementById('one_agent_chart').getContext('2d');
         ctx.width = parseInt($('#one_agent_chart').attr('width'));
@@ -39,7 +45,7 @@ $(document).ready(function() {
                         scaleLabel: {
                             display: true,
                             labelString: 'Year'
-                        }
+                        },
                     }],
                     yAxes: [{
                         type: 'category',
@@ -65,6 +71,8 @@ $(document).ready(function() {
         var form = this;
 
         $.getJSON(url, function(data) {
+            url = '/agents/' + agentId;
+            $.getJSON(url, renderAgent);
             renderOne(agentId, data);
         }).fail(function(jqXHR, textStatus, errorThrown) {
             displayFormError(form, jqXHR.responseJSON);
