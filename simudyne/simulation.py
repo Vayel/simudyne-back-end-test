@@ -1,6 +1,8 @@
 import random
 from .agent import BREED_C, BREED_NC
 
+random.seed()
+
 
 def step(agent):
     agent.age += 1
