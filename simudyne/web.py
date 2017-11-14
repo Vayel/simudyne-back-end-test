@@ -73,13 +73,11 @@ def simulate_all():
     agents = list(model.get_all())
     # +1 because we include the original year
     resp = [create_year_resp() for _ in range(config.N_YEARS + 1)]
+    simulations = simulation.simulate_all(agents, brand_factor, config.N_YEARS)
 
-    for agent in agents:
-        states = simulation.simulate(agent, brand_factor, config.N_YEARS)
-
+    for agent, states in zip(agents, simulations):
         for i, state in enumerate(states):
             resp[i][state['breed']].append(agent.id_)
-
             for key in ('C_lost', 'C_gained', 'C_regained'):
                 if state[key]:
                     resp[i][key].append(agent.id_)

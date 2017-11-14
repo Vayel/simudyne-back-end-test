@@ -1,4 +1,7 @@
+from functools import partial
 import random
+import multiprocessing as mp
+
 from .agent import BREED_C, BREED_NC
 
 random.seed()
@@ -48,3 +51,11 @@ def simulate(agent, brand_factor, n_years):
         })
 
     return states
+
+
+def simulate_all(agents, brand_factor, n_years):
+    pool = mp.Pool()  # The number of processes is optimized by Python
+    return pool.map(
+        partial(simulate, brand_factor=brand_factor, n_years=n_years),
+        agents
+    )
