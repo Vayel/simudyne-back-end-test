@@ -37,7 +37,7 @@ def parse_brand_factor(val):
 def simulate_one(id_):
     agent = model.get_by_id(id_)
     if agent is None:
-        resp = jsonify('No agent has the id {}.'.format(id_))
+        resp = jsonify('No agent with the id "{}" found.'.format(id_))
         resp.status_code = 404
         return resp
 

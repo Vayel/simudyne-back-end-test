@@ -1,7 +1,54 @@
+form {
+  text-align: center;
+  width: 400px;
+  margin: auto;
+}
+
+form .error {
+  border: 1px solid red;
+  background: rgba(255, 0, 0, 0.5);
+  padding: 5px;
+  display: none;
+}
+
+form table {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+form input[type="submit"] {
+  cursor: pointer;
+}
+
+form td {
+  text-align: left;
+}
+
+form td:first-child {
+  text-align: right;
+}
+
+form .help {
+  font-size: 10px;
+}
+
+#simulate_one {
+  display: none;
+  margin-top: 50px;
+}
+
 #agent {
   border-collapse: collapse;
+  margin: auto;
+  margin-bottom: 50px;
+}
+
+#agent th, #agent td {
+  padding: 5px;
+  text-align: center;
 }
 
 .chart_container {
   width: 800px;
+  margin: auto;
 }

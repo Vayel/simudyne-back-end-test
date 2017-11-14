@@ -1,10 +1,16 @@
 $(document).ready(function() {
-    function cleanFormErrors(form) {
-        $(form).find('.errors').html('');
+    function cleanFormError(form) {
+        $(form).find('.error').hide();
+        $(form).find('.error').html('');
     }
 
     function displayFormError(form, msg) {
-        $(form).find('.errors').append('<p>' + msg + '</p>');
+        $(form).find('.error').html(msg);
+        $(form).find('.error').show();
+    }
+
+    function hideResults() {
+        $('#simulate_one').hide();
     }
 
     function renderAgent(agent) {
@@ -129,25 +135,28 @@ $(document).ready(function() {
         });
     }
 
-    $('#simulate_one_form').submit(function(e) {
-        e.preventDefault();
-        cleanFormErrors(this);
-
-        var agentId = $(this).find('[name="agent_id"]').val();
-        var brandFactor = $(this).find('[name="brand_factor"]').val();
-        var url = '/simulate/' + agentId + '?brand_factor=' + brandFactor;
-        var form = this;
-
-        $.getJSON(url, function(simulation) {
-            url = '/agents/' + agentId;
-            $.getJSON(url, function(agent) {
+    function simulateOne(id, brandFactor, form) {
+        $.getJSON('/simulate/' + id + '?brand_factor=' + brandFactor, function(simulation) {
+            $.getJSON('/agents/' + id, function(agent) {
+                $('#simulate_one').show();
                 renderAgent(agent);
-                renderOne(agentId, simulation, agent);
+                renderOne(id, simulation, agent);
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 displayFormError(form, jqXHR.responseJSON);
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             displayFormError(form, jqXHR.responseJSON);
         });
+    }
+
+    $('#simulate_form').submit(function(e) {
+        e.preventDefault();
+        cleanFormError(this);
+        hideResults();
+
+        var agentId = $(this).find('[name="agent_id"]').val();
+        var brandFactor = $(this).find('[name="brand_factor"]').val();
+
+        if(agentId) simulateOne(agentId, brandFactor, this);
     });
 });
