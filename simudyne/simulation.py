@@ -55,9 +55,9 @@ def simulate(agent, brand_factor, n_years):
 
 def simulate_all(agents, brand_factor, n_years):
     pool = mp.Pool()  # The number of processes is optimized by Python
-    data = pool.map(
+    simulations = pool.map(
         partial(simulate, brand_factor=brand_factor, n_years=n_years),
         agents
     )
     pool.terminate()
-    return data
+    return dict(zip((a.id_ for a in agents), simulations))

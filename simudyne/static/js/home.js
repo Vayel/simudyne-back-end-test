@@ -223,7 +223,7 @@ $(document).ready(function() {
     }
 
     function simulateAll(brandFactor, form) {
-        $.getJSON('/simulate?brand_factor=' + brandFactor, function(sim) {
+        $.getJSON('/simulate?format=per_year&brand_factor=' + brandFactor, function(sim) {
             $('#simulate_all').show();
             renderAll(sim);
             $('#loader').hide();

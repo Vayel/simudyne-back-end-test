@@ -60,6 +60,8 @@ def simulate_one(id_):
 
 @app.route('/simulate')
 def simulate_all():
+    FORMATS = ('per_agent', 'per_year')
+
     try:
         brand_factor = parse_brand_factor(request.args.get('brand_factor'))
     except ValueError as e:
@@ -67,20 +69,30 @@ def simulate_all():
         resp.status_code = 400
         return resp
 
-    def create_year_resp():
-        return {'C': [], 'NC': [], 'C_lost': [], 'C_gained': [], 'C_regained': []}
+    format_ = request.args.get('format', FORMATS[0])
+    if format_ not in FORMATS:
+        resp = jsonify('Invalid format. Should be in ' + str(FORMATS))
+        resp.status_code = 400
+        return resp
 
     agents = list(model.get_all())
-    # +1 because we include the original year
-    resp = [create_year_resp() for _ in range(config.N_SIMULATED_YEARS + 1)]
     simulations = simulation.simulate_all(agents, brand_factor, config.N_SIMULATED_YEARS)
 
-    for agent, states in zip(agents, simulations):
-        for i, state in enumerate(states):
-            resp[i][state['breed']].append(agent.id_)
-            for key in ('C_lost', 'C_gained', 'C_regained'):
-                if state[key]:
-                    resp[i][key].append(agent.id_)
+    if format_ == 'per_agent':
+        resp = simulations
+    elif format_ == 'per_year':
+        def create_year_resp():
+            return {'C': [], 'NC': [], 'C_lost': [], 'C_gained': [], 'C_regained': []}
+
+        # +1 because we include the original year
+        resp = [create_year_resp() for _ in range(config.N_SIMULATED_YEARS + 1)]
+
+        for agent_id, states in simulations.items():
+            for i, state in enumerate(states):
+                resp[i][state['breed']].append(agent_id)
+                for key in ('C_lost', 'C_gained', 'C_regained'):
+                    if state[key]:
+                        resp[i][key].append(agent_id)
 
     return jsonify({
         'brand_factor': brand_factor,
