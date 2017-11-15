@@ -50,7 +50,7 @@ def simulate_one(id_):
         resp.status_code = 400
         return resp
 
-    states = simulation.simulate(agent, brand_factor, config.N_YEARS)
+    states = simulation.simulate(agent, brand_factor, config.N_SIMULATED_YEARS)
     return jsonify({
         'states': states,
         'agent_id': id_,
@@ -72,8 +72,8 @@ def simulate_all():
 
     agents = list(model.get_all())
     # +1 because we include the original year
-    resp = [create_year_resp() for _ in range(config.N_YEARS + 1)]
-    simulations = simulation.simulate_all(agents, brand_factor, config.N_YEARS)
+    resp = [create_year_resp() for _ in range(config.N_SIMULATED_YEARS + 1)]
+    simulations = simulation.simulate_all(agents, brand_factor, config.N_SIMULATED_YEARS)
 
     for agent, states in zip(agents, simulations):
         for i, state in enumerate(states):
