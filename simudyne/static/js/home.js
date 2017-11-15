@@ -152,7 +152,9 @@ $(document).ready(function() {
             return {
                 label: label,
                 data: data,
+                backgroundColor: 'transparent',
                 borderColor: color,
+                borderWidth: 1,
                 fill: false,
             };
         }
@@ -191,9 +193,9 @@ $(document).ready(function() {
             data: {
                 labels: labels,
                 datasets: [
-                    createDataset(data.C_lost, 'C_lost', 'green'),
-                    createDataset(data.C_gained, 'C_gained', 'yellow'),
-                    createDataset(data.C_regained, 'C_regained', 'black'),
+                    createDataset(data.C_lost, 'C lost', 'green'),
+                    createDataset(data.C_gained, 'C gained', 'yellow'),
+                    createDataset(data.C_regained, 'C regained', 'black'),
                 ]
             },
             options,

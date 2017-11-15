@@ -36,10 +36,11 @@ form td:first-child {
 
 .help {
   font-size: 10px;
+  text-align: center;
 }
 
-div.help {
-  text-align: center;
+form .help {
+  text-align: left;
 }
 
 #simulate_one, #simulate_all {
@@ -61,4 +62,8 @@ div.help {
 .chart_container {
   width: 800px;
   margin: auto;
+}
+
+canvas {
+  margin-bottom: 30px;
 }
