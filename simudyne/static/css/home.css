@@ -34,8 +34,12 @@ form td:first-child {
   text-align: right;
 }
 
-form .help {
+.help {
   font-size: 10px;
+}
+
+div.help {
+  text-align: center;
 }
 
 #simulate_one, #simulate_all {

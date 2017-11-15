@@ -40,65 +40,67 @@ $(document).ready(function() {
     }
 
     function renderOne(id, simulation, agent) {
-        var CToNCThresh = agent.C_to_NC_thresh;
-        var NCToCThresh = agent.C_to_NC_thresh * simulation.brand_factor;
+        var C_TO_NC_THRESH = agent.C_to_NC_thresh;
+        var NC_TO_C_THRESH = agent.C_to_NC_thresh * simulation.brand_factor;
 
         var labels = Object.keys(simulation.states).map(function(year) {
             return parseInt(year) + agent.age;
         });
         var breeds = [], affinities = [], thresholds = [];
 
+        var thresh;
         for(var state of Object.values(simulation.states)) {
+            if(!breeds.length) thresh = null;
+            else thresh = 100 * (breeds[breeds.length - 1] == 'C' ? C_TO_NC_THRESH : NC_TO_C_THRESH) / state.affinity;
+            thresholds.push(thresh);
             breeds.push(state.breed);
             affinities.push(state.affinity);
         }
 
-        new Chart(getCtx('one_agent_chart'), {
-            type: 'line',
+        new Chart(getCtx('one_agent_line_chart'), {
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Affinity',
-                    showLine: false,
-                    data: affinities,
-                    borderColor: 'blue',
-                    borderWidth: 1,
-					fill: false,
-                    pointStyle: 'rectRot',
-                    pointRadius: 5,
-                    pointHitRadius: 5,
-                    pointHoverRadius: 5,
-                    yAxisID: 'affinity-axis'
-                }, thresholdLine(
-                    'NC->C threshold',
-                    labels[0],
-                    labels[labels.length - 1],
-                    NCToCThresh,
-                    [15, 5]
-                ), thresholdLine(
-                    'C->NC threshold',
-                    labels[0],
-                    labels[labels.length - 1],
-                    CToNCThresh,
-                    [5, 5]
-                ), {
-                    label: 'Breed',
-                    steppedLine: true,
-                    data: breeds,
-                    borderColor: 'red',
+                    type: 'line',
+                    data: [{x: labels[0], y: 100}, {x: labels[labels.length - 1], y: 100}],
+                    borderColor: 'rgba(0, 0, 0)',
 					fill: false,
                     pointRadius: 0,
                     pointHitRadius: 0,
                     pointHoverRadius: 0,
+                    borderWidth: 1,
+                    borderDash: [10, 5],
+                    yAxisID: 'affinity-axis'
+                }, {
+                    type: 'line',
+                    label: 'Breed',
+                    // steppedLine: true,
+                    data: breeds,
+                    borderColor: 'red',
+					fill: false,
+                    pointRadius: 3,
+                    pointHitRadius: 3,
+                    pointHoverRadius: 3,
+                    showLine: false,
+                    borderWidth: 2,
                     yAxisID: 'breed-axis'
-                }]
+                }, {
+                    label: 'Affinity',
+                    data: thresholds,
+                    backgroundColor: 'rgba(0, 0, 255, 0.3)',
+                    borderColor: 'blue',
+                    borderWidth: 1,
+                    yAxisID: 'affinity-axis'
+                },]
             },
             options: {
-                maintainAspectRatio: false,
+                legend: {
+                    display: false,
+                },
                 tooltips: false,
                 scales: {
                     xAxes: [{
-                        offset: true,
                         scaleLabel: {
                             display: true,
                             labelString: 'Age'
@@ -114,18 +116,22 @@ $(document).ready(function() {
                             labelString: 'Breed'
                         }
                     }, {
-                        type: 'linear',
                         display: true,
                         offset: true,
                         id: "affinity-axis",
                         position: "right",
                         scaleLabel: {
                             display: true,
-                            labelString: 'Affinity'
+                            labelString: 'Threshold / affinity (%)'
+                        },
+                        ticks: {
+                            stepSize: 50,
+                            max: Math.max(100, (Math.floor(Math.max(...thresholds) / 50) + 1) * 50),
+                            min: 0,
                         },
                         gridLines: {
                             drawOnChartArea: false,
-                        },
+                        }
                     }]
                 }
             }

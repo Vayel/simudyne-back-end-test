@@ -31,7 +31,7 @@
         <label for="agent_id">Agent id:</label>
       </td>
       <td>
-        <input type="text" name="agent_id" placeholder="Ex: 100006004" />
+        <input type="text" name="agent_id" placeholder="Ex: 132802002" />
         <div class="help">If empty, simulate all agents.</div>
       </td>
     </tr>
@@ -67,8 +67,14 @@ Loading...
     </tr>
   </table>
   
+  <div class="help">
+    The threshold is the value <strong>under</strong> which the affinity must be for the agent
+    to change of breed, <i>i.e.</i> threshold/affinity must be over 100%.
+  </div>
+
   <div class="chart_container">
-    <canvas id="one_agent_chart" width="600" height="200"></canvas>
+    <canvas id="one_agent_line_chart" width="600" height="200"></canvas>
+    <canvas id="one_agent_bar_chart" width="600" height="200"></canvas>
   </div>
 </div>
 
