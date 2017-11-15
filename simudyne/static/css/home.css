@@ -67,3 +67,41 @@ form .help {
 canvas {
   margin-bottom: 30px;
 }
+
+#grids, #grids_legend {
+  text-align: center;
+  margin: 5px 0;
+}
+
+#grids table, #grids_legend table {
+  border-collapse: collapse;
+  margin: auto;
+}
+
+#grids td {
+  padding: 2px;
+}
+
+#grids td.C, #grids_legend td.C {
+  background: red;
+}
+
+#grids td.NC, #grids_legend td.NC {
+  background: blue;
+}
+
+#grids_legend td {
+  font-size: 10px;
+}
+
+#grids_legend td.C, #grids_legend td.NC {
+  padding: 0 7px;
+}
+
+#grids_legend .tools {
+  margin: 10px 0;
+}
+
+#grids_legend .tools button {
+  cursor: pointer;
+}

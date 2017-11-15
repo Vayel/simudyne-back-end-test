@@ -207,6 +207,40 @@ $(document).ready(function() {
         });
     }
 
+    function createGrid(size, data) {
+        var table = document.createElement('table');
+        table.setAttribute('border', 1);
+        var tr, td;
+        for(var i = 0; i < size; i++) {
+            tr = document.createElement('tr');
+            for(var j = 0; j < size; j++) {
+                td = document.createElement('td');
+                td.className = data[i * size + j] || '';
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+        }
+        return table;
+    }
+
+    function renderGrid(sim, year, container, gridSize) {
+        var data = [];
+        for(var key in sim.data) {
+            data.push(sim.data[key][year].breed);
+        }
+        container.appendChild(createGrid(gridSize, data));
+        document.getElementById('grid_year').innerHTML = 'Year ' + year;
+    }
+
+    function renderAllAsGrid(sim) {
+        var agentIds = Object.keys(sim.data);
+        var nbAgents = agentIds.length;
+        var nbGrids = Object.keys(sim.data[agentIds[0]]).length;
+        var gridSize = Math.ceil(Math.sqrt(nbAgents));
+        var container = document.getElementById('grids');
+        renderGrid(sim, 0, container, gridSize);
+    }
+
     function simulateOne(id, brandFactor, form) {
         $.getJSON('/simulate/' + id + '?brand_factor=' + brandFactor, function(simulation) {
             $.getJSON('/agents/' + id, function(agent) {
@@ -227,7 +261,17 @@ $(document).ready(function() {
             $('#simulate_all').show();
             renderAll(sim);
             $('#loader').hide();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            displayFormError(form, jqXHR.responseJSON);
         });
+        $.getJSON('/simulate?format=per_agent&brand_factor=' + brandFactor, function(sim) {
+            $('#simulate_all').show();
+            renderAllAsGrid(sim);
+            $('#loader').hide();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            displayFormError(form, jqXHR.responseJSON);
+        });
+
     }
 
     $('#simulate_form').submit(function(e) {
