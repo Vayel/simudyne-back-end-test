@@ -61,7 +61,7 @@ $(document).ready(function() {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [{
+                datasets: [/*{
                     type: 'line',
                     data: [{x: labels[0], y: 100}, {x: labels[labels.length - 1], y: 100}],
                     borderColor: 'rgba(0, 0, 0)',
@@ -72,7 +72,7 @@ $(document).ready(function() {
                     borderWidth: 1,
                     borderDash: [10, 5],
                     yAxisID: 'affinity-axis'
-                }, {
+                }, */{
                     type: 'line',
                     label: 'Breed',
                     // steppedLine: true,
@@ -125,13 +125,18 @@ $(document).ready(function() {
                             labelString: 'Threshold / affinity (%)'
                         },
                         ticks: {
-                            stepSize: 50,
+                            stepSize: 100,
                             max: Math.max(100, (Math.floor(Math.max(...thresholds) / 50) + 1) * 50),
                             min: 0,
+                            callback: function(value, index, values) {
+                                if(value != 100) return null;
+                                return value;
+                            },
                         },
                         gridLines: {
-                            drawOnChartArea: false,
-                        }
+                            borderDash: [10, 5],
+                            // drawOnChartArea: false,
+                        },
                     }]
                 }
             }
