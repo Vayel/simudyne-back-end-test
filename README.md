@@ -2,6 +2,21 @@
 
 This repository contains the code for Simudyne's back-end test.
 
+## Installation
+
+Prerequisites:
+
+* Linux
+* A Python 3.5+ environment (see [pew](https://github.com/berdario/pew)) with [PyTorch](http://pytorch.org/) installed
+
+Install (in the Python env):
+
+```bash
+git clone https://github.com/Vayel/simudyne-back-end-test
+cd simudyne-back-end-test
+./install.sh
+```
+
 ## Specifications
 
 Download the source files, load the data into a program and run code on that data that follows this logic:
@@ -46,11 +61,12 @@ Use any framework or language you feel appropriate. Provide instructions on how 
 
 The test can be “solved” in under 1 hour. However, we recommend being creative with your submission. We are looking for submissions that show a good understanding of:
 
-Program setup
-Data and logic
-The need for useful output and visualization
-How to write good documentation and instructions
-Robust and extendable code
+* Program setup
+* Data and logic
+* The need for useful output and visualization
+* How to write good documentation and instructions
+* Robust and extendable code
+
 Your solution doesn’t need to be perfect in all the above areas. It’s better in the time frame to focus on one aspect to show off your strengths. Following the test, there will be a code review that asks why you made the choices or tradeoffs you did, and what you think the next steps would be.
 
 Hints and tips
