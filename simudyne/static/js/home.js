@@ -207,6 +207,11 @@ $(document).ready(function() {
         });
     }
 
+    var currentGridYear = 0,
+        maxGridYear = -1,
+        gridSize = 0,
+        perAgentSim = null;
+
     function createGrid(size, data) {
         var table = document.createElement('table');
         table.setAttribute('border', 1);
@@ -223,23 +228,37 @@ $(document).ready(function() {
         return table;
     }
 
-    function renderGrid(sim, year, container, gridSize) {
+    function renderGrid(year) {
         var data = [];
-        for(var key in sim.data) {
-            data.push(sim.data[key][year].breed);
+        for(var key in perAgentSim.data) {
+            data.push(perAgentSim.data[key][year].breed);
         }
-        container.appendChild(createGrid(gridSize, data));
+
+        document.getElementById('grids').innerHTML = '';
+        document.getElementById('grids').appendChild(createGrid(gridSize, data));
         document.getElementById('grid_year').innerHTML = 'Year ' + year;
     }
 
     function renderAllAsGrid(sim) {
         var agentIds = Object.keys(sim.data);
         var nbAgents = agentIds.length;
-        var nbGrids = Object.keys(sim.data[agentIds[0]]).length;
-        var gridSize = Math.ceil(Math.sqrt(nbAgents));
-        var container = document.getElementById('grids');
-        renderGrid(sim, 0, container, gridSize);
+        maxGridYear = Object.keys(sim.data[agentIds[0]]).length - 1;
+        gridSize = Math.ceil(Math.sqrt(nbAgents));
+        perAgentSim = sim;
+        renderGrid(0);
     }
+
+    $('#grids_legend .tools .left').click(function() {
+        var nbGrids = maxGridYear + 1;
+        currentGridYear = (currentGridYear - 1 + nbGrids) % nbGrids;
+        renderGrid(currentGridYear);
+    });
+
+    $('#grids_legend .tools .right').click(function() {
+        var nbGrids = maxGridYear + 1;
+        currentGridYear = (currentGridYear + 1 + nbGrids) % nbGrids;
+        renderGrid(currentGridYear);
+    });
 
     function simulateOne(id, brandFactor, form) {
         $.getJSON('/simulate/' + id + '?brand_factor=' + brandFactor, function(simulation) {
