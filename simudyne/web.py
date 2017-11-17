@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, render_template
 from . import config, model, simulation, ai
 from .agent import BREED_C, BREED_NC
 
+
 app = Flask(__name__)
 model.connect(config.DB_PATH)
 

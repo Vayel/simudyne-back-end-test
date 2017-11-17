@@ -17,6 +17,25 @@ cd simudyne-back-end-test
 ./install.sh
 ```
 
+## Running
+
+In the Python env:
+
+```bash
+python run.py
+```
+
+Then open `localhost:5000` in your browser (mainly tested with Firefox).
+
+## Features overview
+
+* Simulate agents with multiprocessing (multithreading being limited in Python)
+* Store data in a SQL database to make sure they are well formatted
+* Visualize simulations on a web page
+* Try to predict next breed with a neural network (not really conclusive, see issue #3)
+
+Issues contain additional ideas.
+
 ## Specifications
 
 Download the source files, load the data into a program and run code on that data that follows this logic:

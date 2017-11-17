@@ -59,20 +59,19 @@ def get_loaders(batch_size, random_seed, train_proportion=0.6, test_proportion=0
     # The seed is a parameter for reproducibility
 
     try:
-        train = open(config.TRAINLOADER_PATH, 'rb')
-        test = open(config.TESTLOADER_PATH, 'rb')
-        valid = open(config.VALIDLOADER_PATH, 'rb')
+        train_loader = open(config.TRAINLOADER_PATH, 'rb')
+        test_loader = open(config.TESTLOADER_PATH, 'rb')
+        valid_loader = open(config.VALIDLOADER_PATH, 'rb')
     except FileNotFoundError:
         pass
     else:
-        return pickle.load(train), pickle.load(valid), pickle.load(test)
+        return pickle.load(train_loader), pickle.load(valid_loader), pickle.load(test_loader)
 
     dataset = build_dataset()
     num_elements = len(dataset)
     indices = list(range(num_elements))
     train_split = int(np.floor(train_proportion * num_elements))
     test_split = int(np.floor(test_proportion * num_elements))
-    valid_split = num_elements - train_split - test_split
 
     if shuffle:
         np.random.seed(random_seed)
@@ -85,9 +84,12 @@ def get_loaders(batch_size, random_seed, train_proportion=0.6, test_proportion=0
     valid_sampler = SubsetRandomSampler(valid_idx)
     test_sampler = SubsetRandomSampler(test_idx)
 
-    train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
-    valid_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
-    test_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=valid_sampler)
+    train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                               sampler=train_sampler)
+    valid_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                               sampler=test_sampler)
+    test_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                              sampler=valid_sampler)
 
     if save:
         with open(config.TRAINLOADER_PATH, 'wb') as f:
@@ -102,7 +104,7 @@ def get_loaders(batch_size, random_seed, train_proportion=0.6, test_proportion=0
 
 def train(model, loader, criterion, optimizer, n_epochs=2):
     running_loss = 0
-    N_RUNS = 100
+    N_RUNS = 100  # All N_RUNS passes, print loss on screen
     for epoch in range(n_epochs):
         for i, data in enumerate(loader):
             inputs, labels = data
@@ -137,7 +139,7 @@ def load_model(f):
     except FileNotFoundError:
         model = None
     else:
-        model.eval()  # Set the model in eval mode
+        model.eval()  # Set the model in running mode
 
     def wrapper(*args, **kwargs):
         kwargs['model'] = model

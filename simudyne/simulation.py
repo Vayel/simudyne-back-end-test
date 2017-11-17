@@ -26,7 +26,7 @@ def step(agent):
 
 def simulate(agent, brand_factor, n_years):
     agent.NC_to_C_thresh = agent.social_grade * agent.attribute_brand * brand_factor
-    states = [{
+    states = [{  # Include original state
         'breed': agent.breed,
         'affinity': None,
         'C_lost': False,
@@ -37,16 +37,16 @@ def simulate(agent, brand_factor, n_years):
 
     for _ in range(n_years):
         affinity = step(agent)
-        previous_state = states[-1]
+        previous_breed = states[-1]['breed']
 
-        if previous_state['breed'] == BREED_C and agent.breed == BREED_NC:
+        if previous_breed == BREED_C and agent.breed == BREED_NC:
             switched_to_NC = True
 
         states.append({
             'breed': agent.breed,
             'affinity': affinity,
-            'C_lost': agent.breed == BREED_NC and previous_state['breed'] == BREED_C,
-            'C_gained': agent.breed == BREED_C and previous_state['breed'] == BREED_NC,
+            'C_lost': agent.breed == BREED_NC and previous_breed == BREED_C,
+            'C_gained': agent.breed == BREED_C and previous_breed == BREED_NC,
             'C_regained': agent.breed == BREED_C and switched_to_NC,
         })
 
