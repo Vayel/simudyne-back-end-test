@@ -40,6 +40,11 @@ $(document).ready(function() {
     }
 
     function renderOne(id, simulation, agent) {
+        // Predictions
+        $('#C_prediction').html(simulation.predicted_breeds.C);
+        $('#NC_prediction').html(simulation.predicted_breeds.NC);
+
+        // Simulated values
         var C_TO_NC_THRESH = agent.C_to_NC_thresh;
         var NC_TO_C_THRESH = agent.C_to_NC_thresh * simulation.brand_factor;
 

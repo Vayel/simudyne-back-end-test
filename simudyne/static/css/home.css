@@ -68,6 +68,10 @@ canvas {
   margin-bottom: 30px;
 }
 
+#breed_predictions {
+  text-align: center;
+}
+
 #grids, #grids_legend {
   text-align: center;
   margin: 5px 0;

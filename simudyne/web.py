@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 
-from . import config, model, simulation
+from . import config, model, simulation, ai
 from .agent import BREED_C, BREED_NC
 
 app = Flask(__name__)
@@ -51,8 +51,13 @@ def simulate_one(id_):
         return resp
 
     states = simulation.simulate(agent, brand_factor, config.N_SIMULATED_YEARS)
+    predicted_breeds = {}
+    for breed in (BREED_C, BREED_NC):
+        predicted_breeds[breed] = ai.predict(agent, brand_factor, breed)
+
     return jsonify({
         'states': states,
+        'predicted_breeds': predicted_breeds,
         'agent_id': id_,
         'brand_factor': brand_factor,
     })

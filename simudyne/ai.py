@@ -8,7 +8,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 
 from . import config
-from .agent import BREED_C
+from .agent import BREED_C, BREED_NC
 from .model import get_all
 from .simulation import simulate
 
@@ -16,9 +16,10 @@ from .simulation import simulate
 Model = nn.Sequential
 
 
-def agent_to_tensor(agent, brand_factor):
+def agent_to_tensor(agent, brand_factor, breed=None):
+    breed = agent.breed if breed is None else breed
     return torch.FloatTensor([
-        agent.breed == BREED_C,
+        breed == BREED_C,
         agent.social_grade,
         agent.payment_at_purchase,
         agent.attribute_brand,
@@ -134,23 +135,20 @@ def load_model(f):
     try:
         model = torch.load(config.MODEL_PATH)
     except FileNotFoundError:
-        f.model = None
+        model = None
     else:
         model.eval()  # Set the model in eval mode
-        f.model = model
 
     def wrapper(*args, **kwargs):
+        kwargs['model'] = model
         return f(*args, **kwargs)
     return wrapper
 
 
 @load_model
-def predict(agent, brand_factor):
-    if predict.model is None:
-        raise RuntimeError('The model must be trained and saved to "' +
-                           config.MODEL_PATH + '" before being used.')
-    input_ = Variable(agent_to_tensor(agent, brand_factor))
+def predict(agent, brand_factor, breed, model=None):
+    input_ = Variable(agent_to_tensor(agent, brand_factor, breed=breed))
     input_.unsqueeze(0)
-    output = predict.model(input_)
-    _, predicted = torch.max(output.data, 1)  # TODO: > 0.5
-    return predicted
+    output = model(input_)
+    pred = (output.data > 0.5).float()[0]
+    return BREED_C if pred else BREED_NC
