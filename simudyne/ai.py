@@ -98,7 +98,9 @@ def get_datasets(batch_size, random_seed, shuffle=True, save=True):
 
 
 def train(model, loader, criterion, optimizer, n_epochs=2):
-    for _ in range(n_epochs):
+    running_loss = 0
+    N_RUNS = 100
+    for epoch in range(n_epochs):
         for i, data in enumerate(loader):
             inputs, labels = data
             inputs, labels = Variable(inputs), Variable(labels, requires_grad=False)
@@ -110,8 +112,10 @@ def train(model, loader, criterion, optimizer, n_epochs=2):
             loss.backward()
             optimizer.step()
 
-            if not i % 10000:
-                print('{}: loss = {}'.format(i, loss.data[0]))
+            running_loss += loss.data[0]
+            if i and not i % N_RUNS:
+                print('{} - {}: loss = {}'.format(epoch, i, running_loss / N_RUNS))
+                running_loss = 0
 
 
 def test(model, loader, testset_len):
