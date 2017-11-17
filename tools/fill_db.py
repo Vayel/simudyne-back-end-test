@@ -2,6 +2,10 @@ def parse_cell(row, i, f):
     row[i] = f(row[i])
 
 
+def error(e, row):
+    print('Error with row', row, ':', e)
+
+
 if __name__ == '__main__':
     import os
     import sys
@@ -43,6 +47,9 @@ if __name__ == '__main__':
             parse_cell(row, PAP, int)
             parse_cell(row, A_BRAND, float)
             parse_cell(row, A_PRICE, float)
+            if not row[A_PRICE]:
+                error('attribute_price cannot be zero', row)
+                continue
             parse_cell(row, A_PROMO, float)
             parse_cell(row, AR, int)
             parse_cell(row, IFS, int)
@@ -50,7 +57,7 @@ if __name__ == '__main__':
             try:
                 c.execute('INSERT INTO agents VALUES (?,?,?,?,?,?,?,?,?,?)', row)
             except sqlite3.IntegrityError as e:
-                print(e, row)
+                error(e, row)
 
     conn.commit()
     conn.close()
