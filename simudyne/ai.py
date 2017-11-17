@@ -27,6 +27,8 @@ def agent_to_tensor(agent, brand_factor):
         agent.auto_renew,
         agent.inertia_for_switch,
         brand_factor,
+        agent.social_grade * agent.attribute_brand,
+        agent.social_grade * agent.attribute_brand * brand_factor,
     ])
 
 
@@ -51,7 +53,10 @@ def build_dataset():
     return torch.utils.data.TensorDataset(tensor_x, tensor_y)
 
 
-def get_datasets(batch_size, random_seed, shuffle=True, save=True):
+def get_loaders(batch_size, random_seed, train_proportion=0.6, test_proportion=0.2,
+                shuffle=True, save=True):
+    # The seed is a parameter for reproducibility
+
     try:
         train = open(config.TRAINLOADER_PATH, 'rb')
         test = open(config.TESTLOADER_PATH, 'rb')
@@ -61,14 +66,11 @@ def get_datasets(batch_size, random_seed, shuffle=True, save=True):
     else:
         return pickle.load(train), pickle.load(valid), pickle.load(test)
 
-    # The seed is a parameter for reproducibility
-    TRAIN_PROPORTION, TEST_PROPORTION = 0.6, 0.2
-
     dataset = build_dataset()
     num_elements = len(dataset)
     indices = list(range(num_elements))
-    train_split = int(np.floor(TRAIN_PROPORTION * num_elements))
-    test_split = int(np.floor(TEST_PROPORTION * num_elements))
+    train_split = int(np.floor(train_proportion * num_elements))
+    test_split = int(np.floor(test_proportion * num_elements))
     valid_split = num_elements - train_split - test_split
 
     if shuffle:
@@ -129,9 +131,8 @@ def test(model, loader, testset_len):
 
 
 def load_model(f):
-    model = Model()
     try:
-        model.load_state_dict(torch.load(config.MODEL_PATH))
+        model = torch.load(config.MODEL_PATH)
     except FileNotFoundError:
         f.model = None
     else:
