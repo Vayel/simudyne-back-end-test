@@ -7,7 +7,7 @@ if __name__ == '__main__':
     import sys
     import csv
     import sqlite3
-    import simudyne as sim
+    from simudyne import agent
 
     # Named indices
     BREED, ID, AGE, SG, PAP, A_BRAND, A_PRICE, A_PROMO, AR, IFS = list(range(10))
@@ -34,8 +34,8 @@ if __name__ == '__main__':
         next(reader, None)  # Skip the headers
         for row in reader:
             # Parse row
-            row[BREED] = (sim.agent.BREED_C if row[BREED] == 'Breed_C'
-                          else sim.agent.BREED_NC)
+            row[BREED] = (agent.BREED_C if row[BREED] == 'Breed_C'
+                          else agent.BREED_NC)
             parse_cell(row, ID, float)  # Cannot convert into int directly
             parse_cell(row, ID, int)
             parse_cell(row, AGE, int)

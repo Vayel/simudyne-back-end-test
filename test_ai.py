@@ -1,11 +1,11 @@
 import torch
-import simudyne
+from simudyne import ai, config
 
 if __name__ == '__main__':
     BATCH_SIZE = 64
 
-    _, _, test = simudyne.ai.get_loaders(BATCH_SIZE, None)
-    model = simudyne.ai.Model()
-    model = torch.load(simudyne.config.MODEL_PATH)
+    _, _, test = ai.get_loaders(BATCH_SIZE, None)
+    model = ai.Model()
+    model = torch.load(config.MODEL_PATH)
 
-    print(simudyne.ai.test(model, test, len(test.sampler)))
+    print(ai.test(model, test, len(test.sampler)))

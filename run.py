@@ -1,4 +1,4 @@
-import simudyne
+from simudyne.web import app
 
 if __name__ == '__main__':
-    simudyne.web.app.run()
+    app.run()

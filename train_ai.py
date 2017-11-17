@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data
 
-import simudyne
+from simudyne import ai, config
 
 
 if __name__ == '__main__':
@@ -12,9 +12,9 @@ if __name__ == '__main__':
     BATCH_SIZE = 64
 
     print('Loading datasets...')
-    train, valid, _ = simudyne.ai.get_loaders(BATCH_SIZE, None)
+    train, valid, _ = ai.get_loaders(BATCH_SIZE, None)
 
-    model = simudyne.ai.Model(
+    model = ai.Model(
         nn.Linear(D_IN, D_H1),
         nn.ReLU(),
         nn.Linear(D_H1, 1),
@@ -24,8 +24,8 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     print('Training model...')
-    simudyne.ai.train(model, train, criterion, optimizer, n_epochs=4)
-    torch.save(model, simudyne.config.MODEL_PATH)
+    ai.train(model, train, criterion, optimizer, n_epochs=4)
+    #torch.save(model, config.MODEL_PATH)
 
     print('Validating model...')
-    print(simudyne.ai.test(model, valid, len(valid.sampler)))
+    print(ai.test(model, valid, len(valid.sampler)))
