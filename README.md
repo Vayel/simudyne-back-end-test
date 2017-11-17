@@ -7,11 +7,14 @@ This repository contains the code for Simudyne's back-end test.
 Prerequisites:
 
 * Linux
-* A Python 3.5+ environment (see [pew](https://github.com/berdario/pew)) with [PyTorch](http://pytorch.org/) installed
+* A Python 3.5+ environment with [PyTorch](http://pytorch.org/) installed
 
 Install (in the Python env):
 
 ```bash
+# Install and activate the Python env
+# conda install pytorch -c soumith -n simudyne-vl-test
+# source activate simudyne-vl-test
 git clone https://github.com/Vayel/simudyne-back-end-test
 cd simudyne-back-end-test
 ./install.sh
