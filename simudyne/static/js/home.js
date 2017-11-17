@@ -62,6 +62,13 @@ $(document).ready(function() {
             affinities.push(state.affinity);
         }
 
+        // See: https://stackoverflow.com/questions/24815851/how-to-clear-a-chart-from-a-canvas-so-that-hover-events-cannot-be-triggered
+        var parent = $('#one_agent_line_chart').parent();
+        var width = $('#one_agent_line_chart').attr('width');
+        var height = $('#one_agent_line_chart').attr('height');
+        $('#one_agent_line_chart').remove();
+        parent.append('<canvas id="one_agent_line_chart" width="' + width + '" height="' + height + '"><canvas>');
+
         new Chart(getCtx('one_agent_line_chart'), {
             type: 'bar',
             data: {
