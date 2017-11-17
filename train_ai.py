@@ -8,8 +8,8 @@ import simudyne
 
 if __name__ == '__main__':
     D_IN, D_H1 = 9, 32
-    LEARNING_RATE = 1e-4
-    BATCH_SIZE = 128
+    LEARNING_RATE = 1e-3
+    BATCH_SIZE = 64
 
     print('Loading datasets...')
     train, valid, test = simudyne.ai.get_datasets(BATCH_SIZE, None)
@@ -18,14 +18,13 @@ if __name__ == '__main__':
         nn.Linear(D_IN, D_H1),
         nn.ReLU(),
         nn.Linear(D_H1, 1),
-        nn.Sigmoid()
     )
 
-    criterion = nn.BCELoss()
+    criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     print('Training model...')
-    simudyne.ai.train(model, train, criterion, optimizer)
+    simudyne.ai.train(model, train, criterion, optimizer, n_epochs=4)
     # torch.save(model.state_dict(), simudyne.config.MODEL_PATH)
 
     print('Validating model...')
